@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Onboarding Checklist — Shaw Cole Agency</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0f1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --border: #1e293b;
+    --border-accent: #22c55e33;
+    --green: #22c55e;
+    --green-dim: #16a34a;
+    --teal: #14b8a6;
+    --teal-dim: #0d9488;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-muted: #64748b;
+    --white: #f8fafc;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #a78bfa;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, #22c55e08, transparent),
+      radial-gradient(ellipse 60% 40% at 80% 100%, #14b8a608, transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--teal));
+    margin: 1.5rem auto 0;
+    border-radius: 1px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: #14b8a612;
+    border: 1px solid #14b8a625;
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--white) 0%, var(--text-dim) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+    font-weight: 400;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0 2.5rem;
+    position: sticky;
+    top: 0.75rem;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .progress-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .progress-count {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--green), var(--teal));
+    border-radius: 100px;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 12px #22c55e40;
+  }
+
+  .phase-pills {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .phase-pill {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .phase-pill:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .phase-pill.complete {
+    border-color: var(--green);
+    background: #22c55e15;
+    color: var(--green);
+  }
+
+  /* ── Phase Sections ── */
+  .phase {
+    margin-bottom: 2.5rem;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: var(--bg);
+  }
+
+  .phase:nth-child(1) .phase-number { background: linear-gradient(135deg, var(--green), var(--teal)); }
+  .phase:nth-child(2) .phase-number { background: linear-gradient(135deg, var(--teal), var(--purple)); }
+  .phase:nth-child(3) .phase-number { background: linear-gradient(135deg, var(--purple), var(--amber)); }
+  .phase:nth-child(4) .phase-number { background: linear-gradient(135deg, var(--amber), var(--green)); }
+
+  .phase-title-group { flex: 1; }
+
+  .phase-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  .phase-timing {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .phase-progress-mini {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* ── Section Cards ── */
+  .section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .section:hover {
+    border-color: #22c55e22;
+    box-shadow: 0 0 0 1px #22c55e08;
+  }
+
+  .section.all-checked {
+    border-color: var(--green);
+    background: linear-gradient(135deg, #22c55e06, #14b8a604);
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-title .icon {
+    font-size: 0.9rem;
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* ── Checklist Items ── */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .checklist li:hover {
+    background: #ffffff06;
+  }
+
+  .check {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .check svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s;
+  }
+
+  .checklist li.checked .check {
+    background: var(--green);
+    border-color: var(--green);
+    box-shadow: 0 0 8px #22c55e30;
+  }
+
+  .checklist li.checked .check svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .checklist li.checked .item-text {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    text-decoration-color: #64748b50;
+  }
+
+  .item-text {
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .item-text em {
+    font-style: normal;
+    color: var(--teal);
+    font-weight: 500;
+  }
+
+  .item-text strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* ── Blockers Section ── */
+  .blockers {
+    background: linear-gradient(135deg, #ef444410, #f59e0b08);
+    border: 1px solid #ef444425;
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .blockers-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--red);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .blocker-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .blocker-item .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .blocker-item .arrow {
+    color: var(--text-muted);
+    margin: 0 0.15rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .footer span {
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    body { background: #fff; color: #111; }
+    .progress-container { position: static; }
+    .section { break-inside: avoid; border-color: #ddd; }
+    .checklist li.checked .item-text { text-decoration: none; color: #666; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .container { padding: 1rem; }
+    .progress-container { padding: 1rem 1.25rem; border-radius: 12px; }
+    .section { padding: 1rem 1.15rem; }
+    .phase-header { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="badge">ListMagic + ArkData + Creative + Multi-Channel</div>
+    <h1>Client Onboarding Checklist</h1>
+    <p class="subtitle">From Pixel Install to Campaign Launch</p>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-header">
+      <span class="progress-label">Overall Progress</span>
+      <span class="progress-count" id="progressCount">0 / 0</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="phase-pills" id="phasePills"></div>
+  </div>
+
+  <div id="phases">
+
+    <!-- ═══ Phase 1 ═══ -->
+    <div class="phase" data-phase="1">
+      <div class="phase-header">
+        <div class="phase-number">1</div>
+        <div class="phase-title-group">
+          <div class="phase-title">Discovery & Setup</div>
+          <div class="phase-timing">Week 1</div>
+        </div>
+        <div class="phase-progress-mini" data-phase-count="1"></div>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F50D;</span> Client Intelligence
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Identify client's target market: <strong>B2B or B2C</strong></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Define ICP(s) &mdash; for B2B: company firmographic <em>(revenue, headcount, industry)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Define Avatar(s) &mdash; for B2B: <em>Buyer, Champion, End User</em> roles within ICP</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">If B2B: map awareness stages per avatar <em>(Problem / Solution / Product Aware)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Research client's competitors <em>(OrchestraOS agent-assisted)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Audit client's existing digital assets <em>(website, social, ads)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Scrape client's social media for repurposable assets</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Define client's offer / value proposition per avatar</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Determine channels: <strong>Meta, DSP, cold email, LinkedIn</strong> <em>(based on B2B/B2C and budget)</em></span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F4E1;</span> ArkData Pixel Installation
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Get access to client's website backend <em>(CMS admin or developer contact)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Install ArkData pixel <em>(v4 for accuracy, v3 for richer data &mdash; evaluate per client)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set up white-labeled dashboard with client branding</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Verify pixel is firing correctly <em>(check visitor/company data flowing)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Walk client through dashboard &mdash; <strong>instant dopamine moment</strong></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set up click tracking and session recording</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F3AF;</span> ListMagic Audience Building
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Build intent keyword lists per avatar and awareness stage</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Create <strong>3 target markets x 3 intent topics = 9 audiences</strong> <em>(adjust per client)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Generate interactive map of target prospects</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Validate audience quality <em>(size, relevance, freshness)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Present audiences to client for approval</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ Phase 2 ═══ -->
+    <div class="phase" data-phase="2">
+      <div class="phase-header">
+        <div class="phase-number">2</div>
+        <div class="phase-title-group">
+          <div class="phase-title">Creative Production</div>
+          <div class="phase-timing">Week 1 &ndash; 2</div>
+        </div>
+        <div class="phase-progress-mini" data-phase-count="2"></div>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F3A8;</span> Brand Setup
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Collect client brand guide <em>(colors, fonts, logos, tone of voice)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Define copy messaging per avatar per awareness stage</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Create <strong>3&ndash;5 copy variations</strong> per avatar</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F5BC;</span> Static Display Ads (DSP)
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text"><strong>Tier 1:</strong> 3&ndash;5 variations x 3 primary sizes <em>(728x90, 300x250, 160x600)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text"><strong>Tier 2:</strong> 3 variations x 3 secondary sizes <em>(336x280, 300x600, 320x50)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Per avatar &mdash; multiply above by number of avatars</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Client approval on all creatives before launch</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F3AC;</span> Video Assets (Meta)
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">1&ndash;3 video variations per avatar <em>(reels, stories, square)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Hooks: test <strong>3&ndash;5 different opening hooks</strong> per video concept</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Ensure brand consistency across all formats</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F4C4;</span> Landing Pages
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">1 landing page per avatar <em>(minimum)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">A/B test versions where budget allows</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Mobile-optimized</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Tracking pixels installed on all landing pages</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Thank-you page / confirmation flow set up</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ Phase 3 ═══ -->
+    <div class="phase" data-phase="3">
+      <div class="phase-header">
+        <div class="phase-number">3</div>
+        <div class="phase-title-group">
+          <div class="phase-title">Campaign Setup</div>
+          <div class="phase-timing">Week 2</div>
+        </div>
+        <div class="phase-progress-mini" data-phase-count="3"></div>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F4CA;</span> DSP Campaigns
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Upload all display creatives to DSP platform</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Configure targeting with ListMagic intent audiences</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set frequency capping <em>(prevent overexposure)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Configure brand safety: allowlists / blocklists</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Layer verification tools <em>(IAS / DoubleVerify if available)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set bid strategy and daily budget</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set up per-avatar ad sets</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F4F1;</span> Meta Campaigns
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Upload video and image assets</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Create custom audiences from ListMagic data</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set up CBO for single-offer campaigns</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Configure A/B tests <em>(copy, creative, audience)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Install Meta pixel on landing pages for conversion tracking</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x2709;</span> Email Campaigns <em style="font-size:0.65rem;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(if B2B national)</em>
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Prepare email copy <em>(7&ndash;9 email drip sequence per avatar)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Hyperpersonalize each email</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Configure sending infrastructure <em>(warm domains, DMARC/SPF/DKIM)</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Validate deliverability before full launch</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F517;</span> LinkedIn <em style="font-size:0.65rem;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(if B2B high-value)</em>
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Identify high-intent prospects from ListMagic data</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Prepare targeted InMail or connection request copy</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Only for prospects who've shown multiple intent signals</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ Phase 4 ═══ -->
+    <div class="phase" data-phase="4">
+      <div class="phase-header">
+        <div class="phase-number">4</div>
+        <div class="phase-title-group">
+          <div class="phase-title">Launch & Monitor</div>
+          <div class="phase-timing">Week 2 &ndash; 3</div>
+        </div>
+        <div class="phase-progress-mini" data-phase-count="4"></div>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F680;</span> Simultaneous Launch
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">All channels go live at the same time <strong>(DSP + Meta + Email)</strong></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Verify all tracking is firing correctly</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Monitor first <strong>24&ndash;48 hours</strong> for anomalies</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F4BB;</span> Client Dashboard Setup
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Configure funnel view: <em>audience &rarr; impressions &rarr; landing page &rarr; conversion</em></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Attribution tracking across all channels</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Per-campaign and per-avatar filter views</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Set up retargeting: landing page visitors enter new custom audience</span></li>
+        </ul>
+      </div>
+
+      <div class="section" data-section>
+        <div class="section-title">
+          <span class="icon">&#x1F504;</span> Ongoing Management
+          <span class="section-count" data-section-count></span>
+        </div>
+        <ul class="checklist">
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Weekly performance review</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Kill underperforming ad variations within first week</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Creative refresh every <strong>2&ndash;4 weeks</strong></span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Report to client: metrics, insights, next steps</span></li>
+          <li><div class="check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="item-text">Identify cross-sell opportunities <em>(pixel &rarr; intent data &rarr; creative)</em></span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Blockers ═══ -->
+  <div class="blockers">
+    <div class="blockers-title">
+      <span>&#x26A0;</span> Blockers to Watch For
+    </div>
+    <div class="blocker-item"><div class="dot"></div><span>Client doesn't have CMS access for pixel install <span class="arrow">&rarr;</span> need their developer</span></div>
+    <div class="blocker-item"><div class="dot"></div><span>Client's CRM isn't API-integrated <span class="arrow">&rarr;</span> need integration call</span></div>
+    <div class="blocker-item"><div class="dot"></div><span>Client has only one avatar <span class="arrow">&rarr;</span> simpler campaign but less testing surface</span></div>
+    <div class="blocker-item"><div class="dot"></div><span>Client is local only <span class="arrow">&rarr;</span> intent data works best national; adjust expectations</span></div>
+  </div>
+
+  <div class="footer">
+    <span>Shaw Cole Agency</span> &mdash; ListMagic + ArkData + Creative + Multi-Channel
+  </div>
+
+</div>
+
+<script>
+(function() {
+  const allItems = document.querySelectorAll('.checklist li');
+  const progressFill = document.getElementById('progressFill');
+  const progressCount = document.getElementById('progressCount');
+  const pillsContainer = document.getElementById('phasePills');
+  const STORAGE_KEY = 'onboarding-checklist-v1';
+
+  // Load saved state
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) {}
+
+  // Assign IDs and restore state
+  allItems.forEach((li, i) => {
+    li.dataset.idx = i;
+    if (saved[i]) li.classList.add('checked');
+    li.addEventListener('click', () => toggle(li));
+  });
+
+  // Build phase pills
+  document.querySelectorAll('.phase').forEach(p => {
+    const num = p.dataset.phase;
+    const title = p.querySelector('.phase-title').textContent;
+    const a = document.createElement('a');
+    a.className = 'phase-pill';
+    a.href = '#';
+    a.textContent = `Phase ${num}`;
+    a.title = title;
+    a.dataset.phase = num;
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    pillsContainer.appendChild(a);
+  });
+
+  function toggle(li) {
+    li.classList.toggle('checked');
+    const idx = li.dataset.idx;
+    if (li.classList.contains('checked')) saved[idx] = true;
+    else delete saved[idx];
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch(e) {}
+    update();
+  }
+
+  function update() {
+    const total = allItems.length;
+    const checked = document.querySelectorAll('.checklist li.checked').length;
+    const pct = total ? Math.round((checked / total) * 100) : 0;
+    progressFill.style.width = pct + '%';
+    progressCount.textContent = `${checked} / ${total} (${pct}%)`;
+
+    // Update section counts and card styling
+    document.querySelectorAll('[data-section]').forEach(sec => {
+      const items = sec.querySelectorAll('.checklist li');
+      const done = sec.querySelectorAll('.checklist li.checked').length;
+      const countEl = sec.querySelector('[data-section-count]');
+      if (countEl) countEl.textContent = `${done}/${items.length}`;
+      sec.classList.toggle('all-checked', done === items.length && items.length > 0);
+    });
+
+    // Update phase mini-counts
+    document.querySelectorAll('.phase').forEach(p => {
+      const items = p.querySelectorAll('.checklist li');
+      const done = p.querySelectorAll('.checklist li.checked').length;
+      const el = p.querySelector('[data-phase-count]');
+      if (el) el.textContent = `${done}/${items.length}`;
+
+      // Update pill
+      const num = p.dataset.phase;
+      const pill = pillsContainer.querySelector(`[data-phase="${num}"]`);
+      if (pill) pill.classList.toggle('complete', done === items.length && items.length > 0);
+    });
+  }
+
+  update();
+})();
+</script>
+
+</body>
+</html>
