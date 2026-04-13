@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2B vs B2C Campaign Playbook</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0f1a;
+    --bg-card: #111827;
+    --bg-card-alt: #0f172a;
+    --border: #1e293b;
+    --blue: #3b82f6;
+    --blue-dim: #1e3a5f;
+    --emerald: #10b981;
+    --emerald-dim: #064e3b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-bright: #f8fafc;
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+    --purple: #a78bfa;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--emerald));
+    border-radius: 2px;
+    margin: 1.5rem auto 0;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--emerald);
+    border: 1px solid var(--emerald-dim);
+    background: rgba(16,185,129,0.08);
+    padding: 0.3em 1em;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text-bright), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 640px;
+    margin: 0.75rem auto 0;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-title .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .icon-blue  { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .icon-green { background: rgba(16,185,129,0.15); color: var(--emerald); }
+  .icon-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .icon-rose  { background: rgba(244,63,94,0.15);  color: var(--rose); }
+  .icon-purple{ background: rgba(167,139,250,0.15);color: var(--purple); }
+
+  /* ── Comparison Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 3rem;
+    background: var(--bg-card);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 700px;
+  }
+  thead th {
+    background: linear-gradient(135deg, #131c30, #0f172a);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--border);
+  }
+  thead th:first-child { color: var(--text-muted); }
+  thead th:nth-child(2) { color: var(--emerald); }
+  thead th:nth-child(3) { color: var(--blue); }
+  tbody td {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid rgba(30,41,59,0.6);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(59,130,246,0.04); }
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--text-bright);
+    white-space: nowrap;
+  }
+
+  /* ── Two-column cards ── */
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  @media (max-width: 768px) { .duo { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card-b2c::before { background: linear-gradient(90deg, var(--emerald), #34d399); }
+  .card-b2b::before { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+
+  .card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .card-b2c h3 { color: var(--emerald); }
+  .card-b2b h3 { color: var(--blue); }
+
+  .card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .card li {
+    padding-left: 1.4rem;
+    position: relative;
+    color: var(--text);
+    font-size: 0.92rem;
+  }
+  .card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .card-b2c li::before { background: var(--emerald); }
+  .card-b2b li::before { background: var(--blue); }
+
+  /* ── Flowchart ── */
+  .flowchart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+  }
+  .flow-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 0.75rem;
+  }
+  .flow-row:last-child { margin-bottom: 0; }
+
+  .flow-q {
+    flex: 0 0 320px;
+    background: linear-gradient(135deg, #1a2540, #131c30);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-bright);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .flow-q .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .flow-arrow {
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  .flow-a {
+    flex: 1;
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.88rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .flow-row { flex-direction: column; gap: 0.25rem; }
+    .flow-q { flex: unset; }
+    .flow-arrow { transform: rotate(90deg); flex: 0 0 32px; }
+  }
+
+  /* ── Insight Card ── */
+  .insight {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(16,185,129,0.06));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 14px;
+    padding: 2rem 2.25rem;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+  }
+  .insight::before {
+    content: '\201C';
+    position: absolute;
+    top: -0.1em;
+    left: 1rem;
+    font-size: 5rem;
+    color: rgba(59,130,246,0.12);
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+  .insight h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--blue), var(--emerald));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  .insight p {
+    color: var(--text-muted);
+    max-width: 620px;
+    margin: 0 auto;
+    font-size: 1rem;
+  }
+
+  /* ── Stats Grid ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+  }
+  .stat:nth-child(1) .stat-value { color: var(--rose); }
+  .stat:nth-child(2) .stat-value { color: var(--blue); }
+  .stat:nth-child(3) .stat-value { color: var(--emerald); }
+  .stat:nth-child(4) .stat-value { color: var(--amber); }
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  footer span { color: var(--blue); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="badge">Shaw Cole &middot; Campaign Strategy</div>
+    <h1>B2B vs B2C Campaign Playbook</h1>
+    <p>A side-by-side framework for building high-performance campaigns across business and consumer markets.</p>
+  </header>
+
+  <!-- Comparison Table -->
+  <div class="section-title">
+    <div class="icon icon-blue">&#9878;</div>
+    Side-by-Side Comparison
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>B2C</th>
+          <th>B2B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Decision Maker</td>
+          <td>Individual consumer</td>
+          <td>Committee (Buyer + Champion + End User)</td>
+        </tr>
+        <tr>
+          <td>Sales Cycle</td>
+          <td>Hours to days (low ticket), weeks (high ticket)</td>
+          <td>Weeks to months, 6-12mo for enterprise</td>
+        </tr>
+        <tr>
+          <td>Touchpoints</td>
+          <td>7-11 (lower ticket = fewer)</td>
+          <td>11-14+ (more stakeholders, more research)</td>
+        </tr>
+        <tr>
+          <td>Purchase Driver</td>
+          <td>Emotional, impulse, pain-driven</td>
+          <td>Rational + emotional (career risk, trust, ROI)</td>
+        </tr>
+        <tr>
+          <td>Channel Strategy</td>
+          <td>Meta (primary), DSP display, email if national</td>
+          <td>Cold email + DSP, Meta, LinkedIn</td>
+        </tr>
+        <tr>
+          <td>Creative Approach</td>
+          <td>One avatar, pain-point driven, scrappy (UGC-style)</td>
+          <td>Multiple avatars per ICP, role-specific, polished</td>
+        </tr>
+        <tr>
+          <td>Copy Focus</td>
+          <td>Benefits, urgency, social proof</td>
+          <td>ROI, risk reduction, competitive comparison</td>
+        </tr>
+        <tr>
+          <td>Avatars</td>
+          <td>1-2 per product</td>
+          <td>3+ per ICP (Buyer, Champion, End User)</td>
+        </tr>
+        <tr>
+          <td>Landing Pages</td>
+          <td>Fewer, conversion-optimized</td>
+          <td>Multiple per avatar, education-heavy</td>
+        </tr>
+        <tr>
+          <td>ABM Approach</td>
+          <td>Not applicable</td>
+          <td>Essential &mdash; target multiple roles per company</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Architecture Cards -->
+  <div class="section-title">
+    <div class="icon icon-green">&#9881;</div>
+    Campaign Architecture
+  </div>
+  <div class="duo">
+    <div class="card card-b2c">
+      <h3>B2C Architecture</h3>
+      <ul>
+        <li>ICP &asymp; Avatar &mdash; the person IS the target</li>
+        <li>Fewer variations needed, more frequency acceptable</li>
+        <li>Emotion-first creative with clear CTA</li>
+        <li>Lower ticket = fewer touchpoints to close</li>
+        <li>Scrappy / authentic creative often outperforms polished</li>
+      </ul>
+    </div>
+    <div class="card card-b2b">
+      <h3>B2B Architecture</h3>
+      <ul>
+        <li>ICP = The business (firmographic: revenue, headcount, industry)</li>
+        <li>Avatar = The person (role: CXO, VP, manager, end user)</li>
+        <li>Each avatar gets own ad set, copy, and landing page</li>
+        <li>Awareness stages per avatar: Problem &rarr; Solution &rarr; Product Aware</li>
+        <li>Keywords differ by role for the same underlying problem</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Channel Selection -->
+  <div class="section-title">
+    <div class="icon icon-amber">&#10140;</div>
+    Channel Selection Decision Tree
+  </div>
+  <div class="flowchart">
+    <div class="flow-row">
+      <div class="flow-q"><div class="dot" style="background:var(--blue)"></div>Is the target B2B?</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-a">Cold email + DSP + Meta + LinkedIn (if high-value accounts)</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-q"><div class="dot" style="background:var(--emerald)"></div>Is the target B2C?</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-a">Meta (primary) + DSP display + Email (if national audience)</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-q"><div class="dot" style="background:var(--amber)"></div>Is the target market local?</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-a">Caution: intent data works best for national campaigns</div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-q"><div class="dot" style="background:var(--rose)"></div>Is the ticket &gt; $10K?</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-a">Longer nurture sequence, more touchpoints, full ABM approach</div>
+    </div>
+  </div>
+
+  <!-- Key Insight -->
+  <div class="insight">
+    <h3>"Have Two Different Brains"</h3>
+    <p>B2B and B2C require fundamentally different strategies, creative assets, channels, and timelines. Never apply a B2C playbook to B2B or vice versa.</p>
+  </div>
+
+  <!-- What's Often Missed -->
+  <div class="section-title">
+    <div class="icon icon-rose">&#9888;</div>
+    What's Often Missed
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">More</div>
+      <div class="stat-label">B2B decisions are MORE emotionally driven than commonly believed (Google/CEB research)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">3-7</div>
+      <div class="stat-label">Content pieces B2B buyers consume before ever engaging with sales</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">75%</div>
+      <div class="stat-label">Of B2B buyers prefer a rep-free purchasing experience (Gartner)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">#1</div>
+      <div class="stat-label">Content marketing is the foundation of B2B &mdash; not just paid channels</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Shaw Cole</span> &middot; Campaign Strategy Playbook &middot; 2026
+  </footer>
+
+</div>
+</body>
+</html>

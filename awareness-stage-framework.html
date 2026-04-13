@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awareness Stage Campaign Framework</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0f1a;--bg2:#0f1629;--bg3:#141c33;--bg4:#1a2340;
+    --purple:#8b5cf6;--violet:#a78bfa;--lavender:#c4b5fd;
+    --white:#f1f0fb;--gray:#94a3b8;--gray2:#64748b;
+    --green:#34d399;--blue:#60a5fa;--amber:#fbbf24;--rose:#fb7185;--cyan:#22d3ee;
+  }
+  html{font-size:15px;scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--white);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;overflow-x:hidden}
+
+  /* Ambient glow */
+  body::before{content:'';position:fixed;top:-30%;left:-10%;width:60%;height:60%;background:radial-gradient(circle,rgba(139,92,246,.08) 0%,transparent 70%);pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:50%;height:50%;background:radial-gradient(circle,rgba(96,165,250,.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+  .container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1}
+
+  /* Header */
+  header{text-align:center;padding:3rem 0 2rem}
+  .badge{display:inline-block;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(96,165,250,.15));border:1px solid rgba(139,92,246,.3);border-radius:999px;padding:.35rem 1.2rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:1.2rem}
+  h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.15;margin-bottom:.6rem}
+  .subtitle{color:var(--gray);font-size:1rem;max-width:600px;margin:0 auto}
+  .subtitle strong{color:var(--lavender)}
+
+  /* Section styling */
+  section{margin-bottom:2.5rem}
+  .section-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:.5rem;font-weight:600}
+  h2{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:1rem}
+  h3{font-size:1.1rem;font-weight:600;color:var(--violet);margin-bottom:.6rem}
+
+  /* Funnel */
+  .funnel-wrap{display:flex;flex-direction:column;align-items:center;gap:0;margin:1.5rem 0 2rem}
+  .funnel-step{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:.9rem 1.5rem;color:#fff;font-weight:600;font-size:.85rem;transition:transform .2s}
+  .funnel-step:hover{transform:scale(1.03)}
+  .funnel-step .num{position:absolute;left:1.2rem;width:1.6rem;height:1.6rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;background:rgba(0,0,0,.3)}
+  .funnel-step .label{margin-left:.5rem}
+  .funnel-step .desc{font-weight:400;font-size:.75rem;color:rgba(255,255,255,.7);margin-left:.5rem}
+
+  .f1{width:100%;max-width:700px;background:linear-gradient(135deg,#312e81,#4c1d95);clip-path:polygon(3% 0,97% 0,100% 100%,0 100%);border-radius:8px 8px 0 0;padding-top:1.1rem}
+  .f2{width:92%;max-width:644px;background:linear-gradient(135deg,#4c1d95,#6d28d9)}
+  .f3{width:84%;max-width:588px;background:linear-gradient(135deg,#6d28d9,#7c3aed)}
+  .f4{width:76%;max-width:532px;background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+  .f5{width:68%;max-width:476px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);clip-path:polygon(0 0,100% 0,95% 100%,5% 100%);border-radius:0 0 8px 8px;padding-bottom:1.1rem}
+
+  .funnel-arrow{color:var(--purple);font-size:1.2rem;line-height:1;opacity:.5}
+
+  /* Cards */
+  .card{background:var(--bg2);border:1px solid rgba(139,92,246,.12);border-radius:12px;padding:1.5rem;margin-bottom:1rem;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--violet),transparent)}
+  .card.green::before{background:linear-gradient(90deg,var(--green),var(--cyan),transparent)}
+  .card.blue::before{background:linear-gradient(90deg,var(--blue),var(--cyan),transparent)}
+  .card.amber::before{background:linear-gradient(90deg,var(--amber),var(--rose),transparent)}
+
+  .kw-list{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+  .kw{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.2);border-radius:6px;padding:.2rem .6rem;font-size:.75rem;color:var(--lavender);font-family:'Courier New',monospace}
+
+  .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin:.6rem 0}
+  .role-item{background:var(--bg3);border-radius:8px;padding:.7rem .9rem;border-left:3px solid var(--purple)}
+  .role-item .role-name{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--violet);font-weight:700;margin-bottom:.2rem}
+  .role-item .role-search{font-size:.8rem;color:var(--gray);font-style:italic}
+
+  .strategy{display:flex;align-items:flex-start;gap:.6rem;margin:.6rem 0;padding:.6rem;background:var(--bg3);border-radius:8px}
+  .strategy-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+  .strategy p{font-size:.85rem;color:var(--gray)}
+  .strategy strong{color:var(--white)}
+
+  .ad-copy{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(96,165,250,.05));border:1px solid rgba(139,92,246,.15);border-radius:8px;padding:.8rem 1rem;margin-top:.6rem;font-style:italic;font-size:.88rem;color:var(--lavender);position:relative;line-height:1.5}
+  .ad-copy::before{content:'\201C';position:absolute;top:-.2rem;left:.5rem;font-size:2rem;color:var(--purple);opacity:.4;font-style:normal}
+
+  /* Table */
+  .table-wrap{overflow-x:auto;margin:1rem 0;border-radius:12px;border:1px solid rgba(139,92,246,.12)}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  thead{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(96,165,250,.08))}
+  th{padding:.7rem .8rem;text-align:left;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);font-weight:700;border-bottom:1px solid rgba(139,92,246,.15)}
+  td{padding:.65rem .8rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--gray);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(139,92,246,.04)}
+  td:first-child{color:var(--white);font-weight:600}
+  .pill{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;margin:.1rem}
+  .pill-purple{background:rgba(139,92,246,.15);color:var(--violet)}
+  .pill-blue{background:rgba(96,165,250,.15);color:var(--blue)}
+  .pill-green{background:rgba(52,211,153,.15);color:var(--green)}
+
+  /* ABM Section */
+  .abm-visual{display:flex;align-items:center;gap:1.5rem;margin:1rem 0;flex-wrap:wrap;justify-content:center}
+  .abm-company{background:var(--bg3);border:2px solid rgba(139,92,246,.2);border-radius:12px;padding:1.2rem;text-align:center;min-width:120px}
+  .abm-company .icon{font-size:2rem;margin-bottom:.3rem}
+  .abm-company .name{font-size:.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.06em}
+  .abm-arrows{display:flex;flex-direction:column;gap:.3rem;color:var(--purple);font-size:1.5rem}
+  .abm-personas{display:flex;flex-direction:column;gap:.5rem}
+  .persona{display:flex;align-items:center;gap:.7rem;background:var(--bg2);border-radius:8px;padding:.55rem .8rem;border-left:3px solid transparent}
+  .persona.p1{border-left-color:var(--rose)}
+  .persona.p2{border-left-color:var(--amber)}
+  .persona.p3{border-left-color:var(--green)}
+  .persona .p-role{font-weight:600;font-size:.8rem;color:var(--white);min-width:65px}
+  .persona .p-stage{font-size:.7rem;padding:.15rem .5rem;border-radius:4px;font-weight:600}
+  .persona .p-stage.s-product{background:rgba(52,211,153,.15);color:var(--green)}
+  .persona .p-stage.s-solution{background:rgba(251,191,36,.15);color:var(--amber)}
+  .persona .p-stage.s-problem{background:rgba(251,113,133,.15);color:var(--rose)}
+  .persona .p-msg{font-size:.78rem;color:var(--gray);font-style:italic}
+
+  /* Coherent Example */
+  .example-flow{position:relative;padding-left:2rem;margin:1rem 0}
+  .example-flow::before{content:'';position:absolute;left:.65rem;top:.5rem;bottom:.5rem;width:2px;background:linear-gradient(to bottom,var(--rose),var(--amber),var(--blue),var(--green))}
+  .ex-item{position:relative;padding:.6rem 0 .6rem 1.2rem;display:flex;align-items:flex-start;gap:.8rem}
+  .ex-dot{position:absolute;left:-1.65rem;top:.85rem;width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--bg)}
+  .ex-item:nth-child(1) .ex-dot{border-color:var(--rose)}
+  .ex-item:nth-child(2) .ex-dot{border-color:var(--amber)}
+  .ex-item:nth-child(3) .ex-dot{border-color:var(--blue)}
+  .ex-item:nth-child(4) .ex-dot{border-color:var(--green)}
+  .ex-role-tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;min-width:70px;padding:.2rem .5rem;border-radius:4px;text-align:center}
+  .ex-item:nth-child(1) .ex-role-tag{background:rgba(251,113,133,.12);color:var(--rose)}
+  .ex-item:nth-child(2) .ex-role-tag{background:rgba(251,191,36,.12);color:var(--amber)}
+  .ex-item:nth-child(3) .ex-role-tag{background:rgba(96,165,250,.12);color:var(--blue)}
+  .ex-item:nth-child(4) .ex-role-tag{background:rgba(52,211,153,.12);color:var(--green)}
+  .ex-search{font-style:italic;font-size:.85rem;color:var(--gray)}
+
+  .callout{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(96,165,250,.06));border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;text-align:center}
+  .callout p{font-size:.9rem;color:var(--lavender);font-weight:500}
+  .callout strong{color:#fff}
+
+  /* Footer */
+  footer{text-align:center;padding:2rem 0 1rem;border-top:1px solid rgba(139,92,246,.1);margin-top:2rem}
+  footer p{font-size:.7rem;color:var(--gray2)}
+  footer strong{color:var(--violet)}
+
+  /* Responsive */
+  @media(max-width:640px){
+    h1{font-size:1.8rem}
+    .role-grid{grid-template-columns:1fr}
+    .abm-visual{flex-direction:column}
+    .abm-arrows{flex-direction:row}
+    .f1,.f2,.f3,.f4,.f5{width:100%;max-width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge">Campaign Strategy Framework</div>
+  <h1>Awareness Stage<br>Campaign Framework</h1>
+  <p class="subtitle">Based on <strong>Eugene Schwartz's</strong> "Breakthrough Advertising" (1966) &mdash; applied to modern intent data and multi-channel B2B campaigns.</p>
+</header>
+
+<!-- ========== FUNNEL ========== -->
+<section>
+  <div class="section-label">The Model</div>
+  <h2>5 Levels of Customer Awareness</h2>
+  <div class="funnel-wrap">
+    <div class="funnel-step f1">
+      <span class="num">1</span>
+      <span class="label">Unaware</span>
+      <span class="desc">&mdash; Doesn't know they have a problem</span>
+    </div>
+    <div class="funnel-step f2">
+      <span class="num">2</span>
+      <span class="label">Problem Aware</span>
+      <span class="desc">&mdash; Knows the problem, searching for answers</span>
+    </div>
+    <div class="funnel-step f3">
+      <span class="num">3</span>
+      <span class="label">Solution Aware</span>
+      <span class="desc">&mdash; Knows solutions exist, researching categories</span>
+    </div>
+    <div class="funnel-step f4">
+      <span class="num">4</span>
+      <span class="label">Product Aware</span>
+      <span class="desc">&mdash; Evaluating specific vendors and products</span>
+    </div>
+    <div class="funnel-step f5">
+      <span class="num">5</span>
+      <span class="label">Most Aware</span>
+      <span class="desc">&mdash; Ready to buy, needs the right offer</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INTENT DATA MAPPING ========== -->
+<section>
+  <div class="section-label">Intent Data Mapping</div>
+  <h2>How Intent Data Maps to Each Stage</h2>
+
+  <!-- Problem Aware -->
+  <div class="card">
+    <h3>Stage 2 &mdash; Problem Aware</h3>
+    <p style="font-size:.82rem;color:var(--gray);margin-bottom:.5rem"><strong style="color:var(--white)">Keywords:</strong> Pain-based search queries</p>
+    <div class="kw-list">
+      <span class="kw">how do I reduce turnover</span>
+      <span class="kw">my team can't communicate</span>
+      <span class="kw">why are my ads not working</span>
+    </div>
+
+    <p style="font-size:.82rem;color:var(--gray);margin:.6rem 0 .3rem"><strong style="color:var(--white)">By Role in B2B:</strong></p>
+    <div class="role-grid">
+      <div class="role-item">
+        <div class="role-name">CEO</div>
+        <div class="role-search">"preventing turnover in SaaS companies"</div>
+      </div>
+      <div class="role-item">
+        <div class="role-name">Manager</div>
+        <div class="role-search">"how to understand my dev team better"</div>
+      </div>
+      <div class="role-item">
+        <div class="role-name">HR</div>
+        <div class="role-search">"anonymous reporting solutions for HR"</div>
+      </div>
+      <div class="role-item">
+        <div class="role-name">End User</div>
+        <div class="role-search">"how to explain technical problems to my boss"</div>
+      </div>
+    </div>
+
+    <div class="strategy">
+      <div class="strategy-icon" style="background:rgba(139,92,246,.15)">&#9733;</div>
+      <p><strong>Campaign strategy:</strong> Educational content, empathy-driven copy, "you're not alone" messaging</p>
+    </div>
+
+    <div class="ad-copy">
+      67% of SaaS companies lose top engineers to communication failures. Here's what the best teams do differently.
+    </div>
+  </div>
+
+  <!-- Solution Aware -->
+  <div class="card blue">
+    <h3>Stage 3 &mdash; Solution Aware</h3>
+    <p style="font-size:.82rem;color:var(--gray);margin-bottom:.5rem"><strong style="color:var(--white)">Keywords:</strong> Solution-category queries</p>
+    <div class="kw-list">
+      <span class="kw">team communication tools</span>
+      <span class="kw">visitor identification software</span>
+      <span class="kw">intent data platforms</span>
+    </div>
+
+    <div class="strategy">
+      <div class="strategy-icon" style="background:rgba(96,165,250,.15)">&#9878;</div>
+      <p><strong>Campaign strategy:</strong> Comparison content, feature highlights, ROI calculators</p>
+    </div>
+
+    <div class="ad-copy">
+      Stop guessing who's visiting your site. See names, companies, and contact info in real-time.
+    </div>
+  </div>
+
+  <!-- Product Aware -->
+  <div class="card green">
+    <h3>Stage 4 &mdash; Product Aware</h3>
+    <p style="font-size:.82rem;color:var(--gray);margin-bottom:.5rem"><strong style="color:var(--white)">Keywords:</strong> Brand/product-specific queries</p>
+    <div class="kw-list">
+      <span class="kw">[Competitor] alternatives</span>
+      <span class="kw">[Brand] vs [Brand]</span>
+      <span class="kw">[Brand] pricing</span>
+      <span class="kw">[Brand] reviews</span>
+    </div>
+
+    <div class="strategy">
+      <div class="strategy-icon" style="background:rgba(52,211,153,.15)">&#10004;</div>
+      <p><strong>Campaign strategy:</strong> Competitive differentiation, case studies, demo offers, urgency</p>
+    </div>
+
+    <div class="ad-copy">
+      Switching from [Competitor]? Our clients see 40% lower CAC in 30 days. Free migration.
+    </div>
+  </div>
+</section>
+
+<!-- ========== CAMPAIGN ARCHITECTURE TABLE ========== -->
+<section>
+  <div class="section-label">Campaign Architecture</div>
+  <h2>Architecture by Stage</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Targeting</th>
+          <th>Channels</th>
+          <th>Creative Type</th>
+          <th>Goal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Problem Aware</td>
+          <td>Broad intent keywords</td>
+          <td><span class="pill pill-purple">DSP Display</span> <span class="pill pill-blue">Email</span></td>
+          <td>Educational, pain-point</td>
+          <td><span class="pill pill-purple">Build awareness</span></td>
+        </tr>
+        <tr>
+          <td>Solution Aware</td>
+          <td>Category keywords</td>
+          <td><span class="pill pill-purple">DSP</span> <span class="pill pill-blue">Meta Video</span> <span class="pill pill-blue">Email</span></td>
+          <td>Feature comparison</td>
+          <td><span class="pill pill-blue">Drive consideration</span></td>
+        </tr>
+        <tr>
+          <td>Product Aware</td>
+          <td>Competitor keywords, site visitors</td>
+          <td><span class="pill pill-green">Retargeting</span> <span class="pill pill-purple">DSP</span> <span class="pill pill-blue">Meta</span></td>
+          <td>Case studies, demos</td>
+          <td><span class="pill pill-green">Close</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== ABM ========== -->
+<section>
+  <div class="section-label">Account-Based Marketing</div>
+  <h2>Multi-Level ABM Application</h2>
+  <p style="font-size:.88rem;color:var(--gray);margin-bottom:1rem">The <strong style="color:var(--white)">same company</strong> may have people at <strong style="color:var(--violet)">different awareness stages</strong> simultaneously. Each needs different copy, different keywords, different campaigns.</p>
+
+  <div class="abm-visual">
+    <div class="abm-company">
+      <div class="icon">&#127970;</div>
+      <div class="name">Acme Corp</div>
+      <div style="font-size:.7rem;color:var(--gray2);margin-top:.2rem">One Company</div>
+    </div>
+    <div class="abm-arrows">
+      <span>&#10140;</span>
+    </div>
+    <div class="abm-personas">
+      <div class="persona p3">
+        <span class="p-role">CEO</span>
+        <span class="p-stage s-product">Product Aware</span>
+        <span class="p-msg">Comparing vendors</span>
+      </div>
+      <div class="persona p2">
+        <span class="p-role">Manager</span>
+        <span class="p-stage s-solution">Solution Aware</span>
+        <span class="p-msg">Researching categories</span>
+      </div>
+      <div class="persona p1">
+        <span class="p-role">End User</span>
+        <span class="p-stage s-problem">Problem Aware</span>
+        <span class="p-msg">Just frustrated</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== COHERENT EXAMPLE ========== -->
+<section>
+  <div class="section-label">Applied Example</div>
+  <h2>The Coherent Example</h2>
+  <p style="font-size:.88rem;color:var(--gray);margin-bottom:.5rem">One company's <strong style="color:var(--white)">communication problem</strong> manifests differently at every level. All <strong style="color:var(--violet)">Problem Aware</strong> &mdash; same problem, different words.</p>
+
+  <div class="example-flow">
+    <div class="ex-item">
+      <span class="ex-dot"></span>
+      <span class="ex-role-tag">End User</span>
+      <span class="ex-search">"how to explain technical problems to non-technical people"</span>
+    </div>
+    <div class="ex-item">
+      <span class="ex-dot"></span>
+      <span class="ex-role-tag">Manager</span>
+      <span class="ex-search">"how to understand development teams"</span>
+    </div>
+    <div class="ex-item">
+      <span class="ex-dot"></span>
+      <span class="ex-role-tag">HR</span>
+      <span class="ex-search">"anonymous employee feedback tools"</span>
+    </div>
+    <div class="ex-item">
+      <span class="ex-dot"></span>
+      <span class="ex-role-tag">CEO</span>
+      <span class="ex-search">"reducing SaaS company turnover rates"</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>Four different campaigns needed.</strong> Same problem. Same company. Different words, different roles, different entry points.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Framework based on <strong>Eugene Schwartz, "Breakthrough Advertising" (1966)</strong> &mdash; adapted for modern intent data and ABM campaigns.</p>
+</footer>
+
+</div>
+</body>
+</html>

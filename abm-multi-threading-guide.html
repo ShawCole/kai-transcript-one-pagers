@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABM Multi-Threading Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0f1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2236;
+    --border: #1e293b;
+    --border-accent: #2d3a52;
+    --rose: #f43f5e;
+    --pink: #ec4899;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #f8fafc;
+    --gradient: linear-gradient(135deg, #f43f5e, #ec4899);
+    --gradient-subtle: linear-gradient(135deg, rgba(244,63,94,0.15), rgba(236,72,153,0.15));
+    --glow: 0 0 40px rgba(244,63,94,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Background grid effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(244,63,94,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244,63,94,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(244,63,94,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 100px;
+    background: var(--gradient-subtle);
+    border: 1px solid rgba(244,63,94,0.25);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ---- SECTION ---- */
+  section {
+    margin-bottom: 72px;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+
+  h2 span {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ---- ROLE CARDS ---- */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 24px;
+  }
+
+  .role-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .role-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .role-card:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-card-hover);
+    transform: translateY(-4px);
+    box-shadow: var(--glow);
+  }
+
+  .role-card:hover::before {
+    opacity: 1;
+  }
+
+  .role-icon {
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .role-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+  }
+
+  .role-field {
+    margin-bottom: 14px;
+  }
+
+  .role-field-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--pink);
+    margin-bottom: 4px;
+  }
+
+  .role-field p {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .example-ad {
+    margin-top: 18px;
+    background: rgba(244,63,94,0.06);
+    border-left: 3px solid var(--rose);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: var(--text);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .keyword-tag {
+    display: inline-block;
+    background: rgba(236,72,153,0.1);
+    border: 1px solid rgba(236,72,153,0.2);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.78rem;
+    color: var(--pink);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* ---- WHY MULTI-THREAD ---- */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .why-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .why-card:last-child {
+    border-color: rgba(244,63,94,0.4);
+    background: linear-gradient(135deg, rgba(244,63,94,0.08), rgba(236,72,153,0.08));
+  }
+
+  .why-card:last-child .why-title {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .why-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .why-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .why-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .why-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .status-slow { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .status-stuck { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .status-weak { background: rgba(249,115,22,0.15); color: #f97316; }
+  .status-win { background: rgba(52,211,153,0.15); color: #34d399; }
+
+  /* ---- ARCHITECTURE DIAGRAM ---- */
+  .arch-visual {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 32px;
+    overflow-x: auto;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .arch-node {
+    background: rgba(244,63,94,0.08);
+    border: 1px solid rgba(244,63,94,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .arch-node-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--rose);
+    margin-bottom: 4px;
+  }
+
+  .arch-node-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-bright);
+  }
+
+  .arch-arrow {
+    color: var(--rose);
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .arch-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .arch-detail {
+    text-align: center;
+    padding: 16px;
+  }
+
+  .arch-detail-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .arch-detail-label {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* ---- MATH SECTION ---- */
+  .math-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .math-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+
+  .math-card.highlight {
+    border-color: rgba(244,63,94,0.4);
+    background: linear-gradient(135deg, rgba(244,63,94,0.06), rgba(236,72,153,0.06));
+  }
+
+  .math-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+  }
+
+  .math-card.highlight .math-value {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .math-label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .math-formula {
+    font-size: 0.78rem;
+    color: var(--pink);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+
+  /* ---- QUICK START ---- */
+  .steps {
+    position: relative;
+    padding-left: 48px;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--rose), var(--pink), transparent);
+    border-radius: 2px;
+  }
+
+  .step {
+    position: relative;
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .step:hover {
+    border-color: var(--border-accent);
+    transform: translateX(4px);
+  }
+
+  .step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -40px;
+    top: 20px;
+    width: 32px;
+    height: 32px;
+    background: var(--gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: white;
+    line-height: 32px;
+    text-align: center;
+  }
+
+  .step h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+  }
+
+  .step p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    text-align: center;
+    padding: 48px 0 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  .footer p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+
+  .footer .source {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: #475569;
+  }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+    margin: 64px 0;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hero { padding: 48px 0 40px; }
+    .roles-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+    .steps { padding-left: 44px; }
+  }
+
+  @media (max-width: 480px) {
+    .why-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="badge">Account-Based Marketing</div>
+    <h1>ABM Multi-Threading Guide</h1>
+    <p>Targeting Buyer, Champion & End User simultaneously to collapse B2B sales cycles.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- THREE ROLES -->
+  <section>
+    <div class="section-label">The Framework</div>
+    <h2>Three Roles in Every <span>B2B Deal</span></h2>
+    <p style="color: var(--text-dim); margin-bottom: 32px; max-width: 640px;">From Apollo.io's "Outbound Sales, No Fluff" + MEDDIC methodology. Every target account has three distinct personas you need to reach.</p>
+
+    <div class="roles-grid">
+
+      <!-- BUYER -->
+      <div class="role-card">
+        <span class="role-icon">&#127919;</span>
+        <h3>The Buyer</h3>
+
+        <div class="role-field">
+          <div class="role-field-label">Who</div>
+          <p>Signs the check. CXO, VP, Director with budget authority.</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Cares About</div>
+          <p>ROI, risk reduction, competitive advantage, board-level metrics</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Keywords They Search</div>
+          <div class="keyword-tags">
+            <span class="keyword-tag">[solution] ROI</span>
+            <span class="keyword-tag">reduce [problem] costs</span>
+            <span class="keyword-tag">[competitor] pricing</span>
+            <span class="keyword-tag">best [category] for [industry]</span>
+          </div>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Copy Approach</div>
+          <p>Numbers, case studies, competitive benchmarking</p>
+        </div>
+
+        <div class="example-ad">
+          "Companies using intent data reduce CAC by 34% in Q1. See the math."
+        </div>
+      </div>
+
+      <!-- CHAMPION -->
+      <div class="role-card">
+        <span class="role-icon">&#127942;</span>
+        <h3>The Champion</h3>
+
+        <div class="role-field">
+          <div class="role-field-label">Who</div>
+          <p>Internal advocate sounding the alarm. Usually mid-senior management.</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Cares About</div>
+          <p>Solving the problem their team faces, looking good to leadership, making the right recommendation</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Keywords They Search</div>
+          <div class="keyword-tags">
+            <span class="keyword-tag">[solution category] comparison</span>
+            <span class="keyword-tag">how to fix [specific problem]</span>
+            <span class="keyword-tag">tools for [specific workflow]</span>
+          </div>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Copy Approach</div>
+          <p>Problem validation, solution frameworks, easy-to-share resources</p>
+        </div>
+
+        <div class="example-ad">
+          "Your team's communication problem isn't unique. Here's how 200+ SaaS companies fixed it."
+        </div>
+      </div>
+
+      <!-- END USER -->
+      <div class="role-card">
+        <span class="role-icon">&#128100;</span>
+        <h3>The End User</h3>
+
+        <div class="role-field">
+          <div class="role-field-label">Who</div>
+          <p>Actually experiences the problem daily. Engineers, sales reps, marketers.</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Cares About</div>
+          <p>Making their daily work easier, being heard, reducing frustration</p>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Keywords They Search</div>
+          <div class="keyword-tags">
+            <span class="keyword-tag">how to [solve daily friction]</span>
+            <span class="keyword-tag">why does [tool] suck</span>
+            <span class="keyword-tag">[specific task] best practices</span>
+          </div>
+        </div>
+
+        <div class="role-field">
+          <div class="role-field-label">Copy Approach</div>
+          <p>Empathy, quick wins, relatable pain points</p>
+        </div>
+
+        <div class="example-ad">
+          "Tired of explaining the same technical concept 5 different ways? There's a better way."
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WHY MULTI-THREAD -->
+  <section>
+    <div class="section-label">The Evidence</div>
+    <h2>Why <span>Multi-Thread?</span></h2>
+    <p style="color: var(--text-dim); margin-bottom: 32px; max-width: 640px;">Apollo.io's research found targeting ALL THREE roles simultaneously shortens B2B sales cycles significantly.</p>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-status status-slow">Slow</div>
+        <div class="why-title">Buyer Alone</div>
+        <p>Long cycle, may not see the urgency. No internal pressure to act.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-status status-stuck">Stuck</div>
+        <div class="why-title">Champion Alone</div>
+        <p>Can't sign the check, may lose internal momentum over time.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-status status-weak">Weak</div>
+        <div class="why-title">End User Alone</div>
+        <p>No authority, can only create bottom-up pressure. Easily ignored.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-status status-win">Wins Deals</div>
+        <div class="why-title">All Three Together</div>
+        <p>Urgency from below, advocacy from middle, decision power from top.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CAMPAIGN ARCHITECTURE -->
+  <section>
+    <div class="section-label">The System</div>
+    <h2>Campaign <span>Architecture</span></h2>
+    <p style="color: var(--text-dim); margin-bottom: 32px; max-width: 640px;">For one ICP (target company type), here is how the full campaign fans out.</p>
+
+    <div class="arch-visual">
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-label">Start</div>
+          <div class="arch-node-value">1 ICP</div>
+        </div>
+        <div class="arch-arrow">&#8594;</div>
+        <div class="arch-node">
+          <div class="arch-node-label">Segment</div>
+          <div class="arch-node-value">3 Avatars</div>
+        </div>
+        <div class="arch-arrow">&#8594;</div>
+        <div class="arch-node">
+          <div class="arch-node-label">Per Avatar</div>
+          <div class="arch-node-value">3 Ad Sets</div>
+        </div>
+        <div class="arch-arrow">&#8594;</div>
+        <div class="arch-node">
+          <div class="arch-node-label">Per Ad Set</div>
+          <div class="arch-node-value">3-5 Variations</div>
+        </div>
+        <div class="arch-arrow">&#8594;</div>
+        <div class="arch-node">
+          <div class="arch-node-label">Per Variation</div>
+          <div class="arch-node-value">6 Sizes + Video</div>
+        </div>
+      </div>
+
+      <div class="arch-breakdown">
+        <div class="arch-detail">
+          <div class="arch-detail-num">3</div>
+          <div class="arch-detail-label">Avatar segments (Buyer, Champion, End User)</div>
+        </div>
+        <div class="arch-detail">
+          <div class="arch-detail-num">9</div>
+          <div class="arch-detail-label">Campaign tracks (3 Avatars x 3 Awareness Stages)</div>
+        </div>
+        <div class="arch-detail">
+          <div class="arch-detail-num">3</div>
+          <div class="arch-detail-label">Awareness stages (Problem, Solution, Product)</div>
+        </div>
+        <div class="arch-detail">
+          <div class="arch-detail-num">9</div>
+          <div class="arch-detail-label">Unique landing pages with tailored messaging</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- MATH PER CLIENT -->
+  <section>
+    <div class="section-label">The Numbers</div>
+    <h2>Math Per <span>Client</span></h2>
+
+    <div class="math-grid">
+      <div class="math-card">
+        <div class="math-value">9</div>
+        <div class="math-label">Campaign Tracks</div>
+        <div class="math-formula">1 ICP x 3 Avatars x 3 Stages</div>
+      </div>
+      <div class="math-card">
+        <div class="math-value">162-270</div>
+        <div class="math-label">Static Ad Creatives</div>
+        <div class="math-formula">9 tracks x (3-5 variations x 6 sizes)</div>
+      </div>
+      <div class="math-card">
+        <div class="math-value">9-27</div>
+        <div class="math-label">Video Assets</div>
+        <div class="math-formula">9 tracks x 1-3 videos each</div>
+      </div>
+      <div class="math-card">
+        <div class="math-value">9</div>
+        <div class="math-label">Landing Pages</div>
+        <div class="math-formula">1 per campaign track</div>
+      </div>
+      <div class="math-card highlight" style="grid-column: 1 / -1;">
+        <div class="math-value">$3-5K upfront is necessary</div>
+        <div class="math-label">This volume of personalized creative across 3 roles, 3 awareness stages, and multiple formats is why the upfront investment exists. It is not a margin play -- it is production cost.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- QUICK START -->
+  <section>
+    <div class="section-label">Getting Started</div>
+    <h2>Quick Start: <span>Single Avatar</span></h2>
+    <p style="color: var(--text-dim); margin-bottom: 32px; max-width: 640px;">Not every client needs full ABM. Start simple and layer complexity as engagement data comes in.</p>
+
+    <div class="steps">
+      <div class="step" data-step="1">
+        <h4>Pick the Champion</h4>
+        <p>Usually the most responsive persona. They are actively searching for solutions and willing to engage with your content.</p>
+      </div>
+      <div class="step" data-step="2">
+        <h4>Run Problem Aware + Solution Aware Campaigns</h4>
+        <p>Two awareness stages give you top-of-funnel education and mid-funnel positioning without overwhelming your budget.</p>
+      </div>
+      <div class="step" data-step="3">
+        <h4>Layer in Buyer Targeting</h4>
+        <p>Once champion engagement is confirmed through clicks, downloads, or replies, start running ROI-focused ads to the decision maker.</p>
+      </div>
+      <div class="step" data-step="4">
+        <h4>Add End User Targeting</h4>
+        <p>Create bottom-up pressure. When the end user is asking for your solution internally, the buyer hears it from every direction.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>ABM Multi-Threading Guide &mdash; Internal Reference</p>
+    <p class="source">Sources: Apollo.io "Outbound Sales, No Fluff" &middot; MEDDIC Methodology</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

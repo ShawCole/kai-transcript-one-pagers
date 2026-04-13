@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combined Offer Architecture — Shaw × Kai Agency</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0f1a;--bg2:#0f1629;--bg3:#141c33;--bg4:#1a2340;
+    --blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;--pink:#ec4899;
+    --green:#10b981;--amber:#f59e0b;--red:#ef4444;
+    --text:#e2e8f0;--text-dim:#94a3b8;--text-bright:#f8fafc;
+    --border:rgba(59,130,246,0.15);
+    --glow:rgba(59,130,246,0.08);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg);color:var(--text);
+    line-height:1.6;overflow-x:hidden;
+    min-height:100vh;
+  }
+  body::before{
+    content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59,130,246,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(6,182,212,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(139,92,246,0.03) 0%, transparent 60%);
+    pointer-events:none;z-index:0;
+  }
+  .container{max-width:1200px;margin:0 auto;padding:40px 24px;position:relative;z-index:1;}
+
+  /* Header */
+  .header{text-align:center;margin-bottom:56px;position:relative;}
+  .logo{
+    font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;
+    color:var(--cyan);margin-bottom:12px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .logo::before,.logo::after{content:'';width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));}
+  .logo::after{background:linear-gradient(90deg,var(--cyan),transparent);}
+  h1{
+    font-size:clamp(28px,5vw,44px);font-weight:800;line-height:1.15;
+    background:linear-gradient(135deg,var(--text-bright) 0%,var(--blue) 50%,var(--cyan) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;margin-bottom:12px;
+  }
+  .subtitle{font-size:17px;color:var(--text-dim);max-width:600px;margin:0 auto;}
+  .header-line{
+    width:120px;height:2px;margin:24px auto 0;
+    background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);
+    border-radius:2px;
+  }
+
+  /* Section titles */
+  .section-title{
+    font-size:22px;font-weight:700;color:var(--text-bright);margin-bottom:8px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .section-title .num{
+    font-size:12px;font-weight:700;letter-spacing:2px;color:var(--cyan);
+    background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);
+    padding:4px 10px;border-radius:4px;
+  }
+  .section-desc{color:var(--text-dim);font-size:14px;margin-bottom:28px;}
+  .section{margin-bottom:56px;}
+
+  /* Vertical Stack */
+  .stack{display:flex;flex-direction:column;gap:0;position:relative;}
+  .stack::before{
+    content:'';position:absolute;left:39px;top:24px;bottom:24px;width:2px;
+    background:linear-gradient(180deg,var(--blue),var(--cyan),var(--purple),var(--pink),var(--green));
+    border-radius:2px;z-index:0;
+  }
+  .layer{
+    display:flex;align-items:stretch;gap:0;position:relative;z-index:1;
+    animation:fadeInUp 0.5s ease both;
+  }
+  .layer:nth-child(1){animation-delay:0.1s}
+  .layer:nth-child(2){animation-delay:0.2s}
+  .layer:nth-child(3){animation-delay:0.3s}
+  .layer:nth-child(4){animation-delay:0.4s}
+  .layer:nth-child(5){animation-delay:0.5s}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .layer-dot{
+    width:20px;height:20px;border-radius:50%;flex-shrink:0;
+    margin:24px 20px 0 20px;position:relative;z-index:2;
+    box-shadow:0 0 12px rgba(59,130,246,0.4);
+  }
+  .layer:nth-child(1) .layer-dot{background:var(--blue)}
+  .layer:nth-child(2) .layer-dot{background:var(--cyan)}
+  .layer:nth-child(3) .layer-dot{background:var(--purple)}
+  .layer:nth-child(4) .layer-dot{background:var(--pink)}
+  .layer:nth-child(5) .layer-dot{background:var(--green)}
+
+  .layer-card{
+    flex:1;background:var(--bg2);border:1px solid var(--border);
+    border-radius:12px;padding:20px 24px;margin:6px 0;
+    transition:all 0.3s ease;position:relative;overflow:hidden;
+  }
+  .layer-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    border-radius:12px 12px 0 0;
+  }
+  .layer:nth-child(1) .layer-card::before{background:linear-gradient(90deg,var(--blue),transparent)}
+  .layer:nth-child(2) .layer-card::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+  .layer:nth-child(3) .layer-card::before{background:linear-gradient(90deg,var(--purple),transparent)}
+  .layer:nth-child(4) .layer-card::before{background:linear-gradient(90deg,var(--pink),transparent)}
+  .layer:nth-child(5) .layer-card::before{background:linear-gradient(90deg,var(--green),transparent)}
+  .layer-card:hover{border-color:rgba(59,130,246,0.3);transform:translateX(4px);background:var(--bg3);}
+
+  .layer-label{
+    font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;
+  }
+  .layer:nth-child(1) .layer-label{color:var(--blue)}
+  .layer:nth-child(2) .layer-label{color:var(--cyan)}
+  .layer:nth-child(3) .layer-label{color:var(--purple)}
+  .layer:nth-child(4) .layer-label{color:var(--pink)}
+  .layer:nth-child(5) .layer-label{color:var(--green)}
+
+  .layer-name{font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:6px;}
+  .layer-desc{font-size:14px;color:var(--text-dim);line-height:1.5;}
+  .layer-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .layer-tags span{
+    font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);
+  }
+
+  /* Cross-sell */
+  .crossell-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+  .cross-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+    padding:24px;position:relative;overflow:hidden;
+    transition:all 0.3s ease;
+  }
+  .cross-card:hover{border-color:rgba(6,182,212,0.3);transform:translateY(-2px);
+    box-shadow:0 8px 32px rgba(6,182,212,0.08);}
+  .cross-entry{
+    font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:6px;
+  }
+  .cross-entry::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+  .cross-hook{
+    font-size:15px;color:var(--text-bright);font-weight:600;margin-bottom:8px;
+    font-style:italic;line-height:1.4;
+  }
+  .cross-hook::before{content:'\201C';color:var(--blue);font-size:20px;margin-right:2px;}
+  .cross-hook::after{content:'\201D';color:var(--blue);font-size:20px;margin-left:2px;}
+  .cross-arrow{
+    display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+    color:var(--blue);margin-top:8px;
+  }
+  .cross-arrow svg{width:16px;height:16px;transition:transform 0.2s ease;}
+  .cross-card:hover .cross-arrow svg{transform:translateX(4px);}
+
+  /* Pricing */
+  .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
+  .price-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+    padding:32px 28px;text-align:center;position:relative;overflow:hidden;
+    transition:all 0.3s ease;
+  }
+  .price-card.featured{
+    border-color:rgba(59,130,246,0.4);
+    background:linear-gradient(180deg,rgba(59,130,246,0.08) 0%,var(--bg2) 100%);
+  }
+  .price-card.featured::before{
+    content:'RECOMMENDED';position:absolute;top:16px;right:-32px;
+    font-size:9px;font-weight:800;letter-spacing:2px;color:var(--bg);
+    background:linear-gradient(90deg,var(--blue),var(--cyan));
+    padding:4px 40px;transform:rotate(45deg);
+  }
+  .price-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(59,130,246,0.1);}
+  .price-tier{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:16px;}
+  .price-main{font-size:36px;font-weight:800;color:var(--text-bright);line-height:1;}
+  .price-main span{font-size:16px;color:var(--text-dim);font-weight:500;}
+  .price-sub{font-size:14px;color:var(--text-dim);margin-top:4px;}
+  .price-divider{width:40px;height:2px;background:var(--border);margin:20px auto;border-radius:2px;}
+  .price-detail{font-size:13px;color:var(--text-dim);line-height:1.6;}
+
+  /* Target Market */
+  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:640px){.market-grid{grid-template-columns:1fr;}}
+  .market-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;
+    transition:all 0.3s ease;
+  }
+  .market-card:hover{border-color:rgba(59,130,246,0.3);}
+  .market-card h3{font-size:15px;font-weight:700;color:var(--text-bright);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .market-card ul{list-style:none;padding:0;}
+  .market-card li{
+    font-size:14px;color:var(--text-dim);padding:6px 0;padding-left:20px;position:relative;
+  }
+  .market-card li::before{
+    content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;
+  }
+  .market-yes li::before{background:var(--green)}
+  .market-no li::before{background:var(--red)}
+  .market-icp li::before{background:var(--blue)}
+
+  /* Division of Labor */
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+  .team-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+    padding:28px 24px;text-align:center;transition:all 0.3s ease;
+  }
+  .team-card:hover{border-color:rgba(59,130,246,0.3);transform:translateY(-2px);}
+  .team-avatar{
+    width:56px;height:56px;border-radius:50%;margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:800;color:var(--bg);
+  }
+  .team-card:nth-child(1) .team-avatar{background:linear-gradient(135deg,var(--blue),var(--cyan))}
+  .team-card:nth-child(2) .team-avatar{background:linear-gradient(135deg,var(--purple),var(--pink))}
+  .team-card:nth-child(3) .team-avatar{background:linear-gradient(135deg,var(--amber),var(--red))}
+  .team-name{font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:4px;}
+  .team-role{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+  .team-tasks{list-style:none;padding:0;}
+  .team-tasks li{font-size:13px;color:var(--text-dim);padding:4px 0;}
+
+  /* Moat */
+  .moat-card{
+    background:linear-gradient(135deg,rgba(59,130,246,0.08) 0%,rgba(6,182,212,0.06) 50%,rgba(139,92,246,0.06) 100%);
+    border:1px solid rgba(59,130,246,0.2);border-radius:16px;
+    padding:40px;text-align:center;position:relative;overflow:hidden;
+  }
+  .moat-card::before{
+    content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+    background:conic-gradient(from 0deg,transparent 0%,rgba(59,130,246,0.05) 25%,transparent 50%);
+    animation:moatSpin 20s linear infinite;
+  }
+  @keyframes moatSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .moat-label{
+    font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:var(--cyan);margin-bottom:16px;position:relative;
+  }
+  .moat-quote{
+    font-size:clamp(18px,3vw,24px);font-weight:600;color:var(--text-bright);
+    line-height:1.5;max-width:700px;margin:0 auto;position:relative;
+    font-style:italic;
+  }
+
+  /* Footer */
+  .footer{
+    text-align:center;margin-top:64px;padding-top:32px;
+    border-top:1px solid var(--border);
+  }
+  .footer p{font-size:13px;color:var(--text-dim);}
+  .footer .logo-sm{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--cyan);margin-bottom:8px;}
+
+  /* Responsive */
+  @media(max-width:768px){
+    .stack::before{left:19px}
+    .layer-dot{margin:24px 10px 0 10px;width:16px;height:16px;}
+    .layer-card{padding:16px 18px;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .team-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">OrchestraOS</div>
+    <h1>Combined Offer Architecture</h1>
+    <p class="subtitle">Shaw Cole &times; Kai Agency &mdash; Full-stack growth infrastructure for mid-market</p>
+    <div class="header-line"></div>
+  </header>
+
+  <!-- Vertical Stack -->
+  <section class="section">
+    <div class="section-title"><span class="num">01</span> The Vertical Stack</div>
+    <p class="section-desc">Five integrated layers &mdash; no single vendor packages all of this for mid-market.</p>
+    <div class="stack">
+
+      <div class="layer">
+        <div class="layer-dot"></div>
+        <div class="layer-card">
+          <div class="layer-label">Layer 1 &mdash; Targeting</div>
+          <div class="layer-name">ListMagic.ai Intent Data</div>
+          <div class="layer-desc">Custom audiences built from real search behavior. Refreshed daily on a 7-day rolling window so targeting never goes stale.</div>
+          <div class="layer-tags"><span>Search Intent</span><span>Custom Audiences</span><span>Daily Refresh</span><span>7-Day Window</span></div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-dot"></div>
+        <div class="layer-card">
+          <div class="layer-label">Layer 2 &mdash; Tracking</div>
+          <div class="layer-name">ArkData Pixel</div>
+          <div class="layer-desc">Website visitor identity resolution, session recording, company identification, and contact data enrichment &mdash; all from a single pixel.</div>
+          <div class="layer-tags"><span>Identity Resolution</span><span>Session Recording</span><span>Company ID</span><span>Contact Enrichment</span></div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-dot"></div>
+        <div class="layer-card">
+          <div class="layer-label">Layer 3 &mdash; Creative</div>
+          <div class="layer-name">Motion Graphics + Display Ads</div>
+          <div class="layer-desc">3&ndash;5 variations &times; 6 IAB sizes per avatar, plus video production (reels, stories, square). Static and motion, built for performance.</div>
+          <div class="layer-tags"><span>3-5 Variations</span><span>6 IAB Sizes</span><span>Video Reels</span><span>Motion Graphics</span></div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-dot"></div>
+        <div class="layer-card">
+          <div class="layer-label">Layer 4 &mdash; Distribution</div>
+          <div class="layer-name">Multi-Channel Campaigns</div>
+          <div class="layer-desc">DSP across 9 ad exchanges, Meta video-first campaigns, cold email for B2B national, and LinkedIn for B2B high-intent prospects.</div>
+          <div class="layer-tags"><span>9 Ad Exchanges</span><span>Meta Video</span><span>Cold Email</span><span>LinkedIn B2B</span></div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-dot"></div>
+        <div class="layer-card">
+          <div class="layer-label">Layer 5 &mdash; Management</div>
+          <div class="layer-name">OrchestraOS</div>
+          <div class="layer-desc">Agent orchestration, client dashboards, approval workflows, and full project visibility &mdash; the operating system behind the service.</div>
+          <div class="layer-tags"><span>Agent Orchestration</span><span>Client Dashboards</span><span>Approvals</span><span>Visibility</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Cross-Sell Paths -->
+  <section class="section">
+    <div class="section-title"><span class="num">02</span> Cross-Sell Paths</div>
+    <p class="section-desc">Every entry point leads to the full stack. Land anywhere, expand everywhere.</p>
+    <div class="crossell-grid">
+
+      <div class="cross-card">
+        <div class="cross-entry">Pixel Entry</div>
+        <div class="cross-hook">See who's searching before they even visit your site</div>
+        <div class="cross-arrow">
+          Upgrade to ListMagic
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="cross-card">
+        <div class="cross-entry">Intent Data Entry</div>
+        <div class="cross-hook">Your creatives aren't converting the traffic you're paying for</div>
+        <div class="cross-arrow">
+          Add Creative Services
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="cross-card">
+        <div class="cross-entry">Creative Entry</div>
+        <div class="cross-hook">Beautiful ads going to the wrong eyeballs is just burning budget</div>
+        <div class="cross-arrow">
+          Add ListMagic Targeting
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="cross-card">
+        <div class="cross-entry">Any Entry Point</div>
+        <div class="cross-hook">See exactly who is landing on your site from every campaign</div>
+        <div class="cross-arrow">
+          Add ArkData Pixel
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section">
+    <div class="section-title"><span class="num">03</span> Pricing</div>
+    <p class="section-desc">Three tiers designed for mid-market budgets &mdash; no enterprise bloat.</p>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-tier">Starter</div>
+        <div class="price-main">$3K <span>upfront</span></div>
+        <div class="price-sub">+ $1,500/mo ongoing</div>
+        <div class="price-divider"></div>
+        <div class="price-detail">Core stack access. Ideal for testing intent data + pixel before scaling creative and distribution.</div>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-tier">Done-for-You Premium</div>
+        <div class="price-main">$5K <span>upfront</span></div>
+        <div class="price-sub">+ $3,000/mo ongoing</div>
+        <div class="price-divider"></div>
+        <div class="price-detail">Full vertical stack. Targeting, tracking, creative production, multi-channel distribution, and OrchestraOS management.</div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Growth Partner</div>
+        <div class="price-main" style="font-size:28px">Rev Share</div>
+        <div class="price-sub">on incremental revenue</div>
+        <div class="price-divider"></div>
+        <div class="price-detail">Agency white-label model. We provide the infrastructure, you own the client relationship and share upside.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Target Market -->
+  <section class="section">
+    <div class="section-title"><span class="num">04</span> Target Market</div>
+    <p class="section-desc">Laser focus on the underserved mid-market segment.</p>
+    <div class="market-grid">
+
+      <div class="market-card market-yes">
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          Sweet Spot
+        </h3>
+        <ul>
+          <li>Mid-market / SMB ($1M &ndash; $50M revenue)</li>
+          <li>SaaS companies with growth budgets</li>
+          <li>Coaches and consultants scaling past referrals</li>
+          <li>E-commerce brands needing intent-driven acquisition</li>
+        </ul>
+      </div>
+
+      <div class="market-card market-no">
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+          Not a Fit
+        </h3>
+        <ul>
+          <li>Enterprise ($100M+) &mdash; too long sales cycles</li>
+          <li>Bureaucratic procurement processes</li>
+          <li>Companies needing 12-month pilot programs</li>
+          <li>Anyone expecting $500/mo agency pricing</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Division of Labor -->
+  <section class="section">
+    <div class="section-title"><span class="num">05</span> Division of Labor</div>
+    <p class="section-desc">Clear ownership &mdash; zero overlap, full coverage.</p>
+    <div class="team-grid">
+
+      <div class="team-card">
+        <div class="team-avatar">SC</div>
+        <div class="team-name">Shaw</div>
+        <div class="team-role">Technology &amp; Strategy</div>
+        <ul class="team-tasks">
+          <li>Strategy &amp; architecture</li>
+          <li>Data infrastructure</li>
+          <li>OrchestraOS platform</li>
+          <li>Deal closing</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">K</div>
+        <div class="team-name">Kai</div>
+        <div class="team-role">Sales &amp; Clients</div>
+        <ul class="team-tasks">
+          <li>Client acquisition</li>
+          <li>Sales pipeline</li>
+          <li>Client relationships</li>
+          <li>Account management</li>
+        </ul>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">B</div>
+        <div class="team-name">Banjo</div>
+        <div class="team-role">Creative Production</div>
+        <ul class="team-tasks">
+          <li>Static display ads</li>
+          <li>Motion graphics</li>
+          <li>Video production</li>
+          <li>Creative variations</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Competitive Moat -->
+  <section class="section">
+    <div class="section-title"><span class="num">06</span> Competitive Moat</div>
+    <div class="moat-card">
+      <div class="moat-label">Why This Wins</div>
+      <div class="moat-quote">No single vendor packages all of this for mid-market at $3&ndash;5K/mo.<br>Enterprise has bespoke teams. Mid-market does not.<br>We are that team.</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="logo-sm">ORCHESTRAOS</div>
+    <p>Shaw Cole &times; Kai Agency &mdash; Combined Offer Architecture v1.0</p>
+  </footer>
+
+</div>
+
+<script>
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.section').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+
+// Trigger first section immediately
+setTimeout(() => {
+  document.querySelectorAll('.section').forEach((el, i) => {
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, i * 100);
+  });
+}, 100);
+</script>
+
+</body>
+</html>

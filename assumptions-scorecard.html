@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shaw's Assumptions Scorecard — Apr 13, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0f1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --border: #1e293b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.08);
+    --green-border: rgba(34,197,94,0.25);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.08);
+    --yellow-border: rgba(234,179,8,0.25);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.08);
+    --red-border: rgba(239,68,68,0.25);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.08);
+    --blue-border: rgba(59,130,246,0.25);
+    --purple: #a855f7;
+    --purple-bg: rgba(168,85,247,0.08);
+    --purple-border: rgba(168,85,247,0.25);
+    --accent: #38bdf8;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56,189,248,0.06), transparent),
+      radial-gradient(circle at 20% 80%, rgba(168,85,247,0.04), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* ── Score Hero ── */
+  .score-hero {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 40px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+  }
+
+  .score-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .score-number {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .score-number span {
+    font-size: 28px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .score-label {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .score-breakdown {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .score-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 10px;
+  }
+
+  .score-pill.green { color: var(--green); background: var(--green-bg); border: 1px solid var(--green-border); }
+  .score-pill.yellow { color: var(--yellow); background: var(--yellow-bg); border: 1px solid var(--yellow-border); }
+  .score-pill.red { color: var(--red); background: var(--red-bg); border: 1px solid var(--red-border); }
+  .score-pill.blue { color: var(--blue); background: var(--blue-bg); border: 1px solid var(--blue-border); }
+
+  .score-pill .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .score-pill.green .dot { background: var(--green); }
+  .score-pill.yellow .dot { background: var(--yellow); }
+  .score-pill.red .dot { background: var(--red); }
+  .score-pill.blue .dot { background: var(--blue); }
+
+  /* ── Score Bar ── */
+  .score-bar-container {
+    margin-top: 28px;
+  }
+
+  .score-bar-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+
+  .score-bar {
+    display: flex;
+    height: 14px;
+    border-radius: 100px;
+    overflow: hidden;
+    gap: 3px;
+  }
+
+  .score-bar .seg {
+    border-radius: 100px;
+    transition: flex 0.6s ease;
+  }
+
+  .score-bar .seg.green { flex: 12; background: var(--green); }
+  .score-bar .seg.yellow { flex: 5; background: var(--yellow); }
+  .score-bar .seg.red { flex: 3; background: var(--red); }
+  .score-bar .seg.blue { flex: 1; background: var(--blue); opacity: 0.6; }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .section-icon.green { background: var(--green-bg); border: 1px solid var(--green-border); }
+  .section-icon.yellow { background: var(--yellow-bg); border: 1px solid var(--yellow-border); }
+  .section-icon.red { background: var(--red-bg); border: 1px solid var(--red-border); }
+  .section-icon.blue { background: var(--blue-bg); border: 1px solid var(--blue-border); }
+  .section-icon.purple { background: var(--purple-bg); border: 1px solid var(--purple-border); }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .section-title.green { color: var(--green); }
+  .section-title.yellow { color: var(--yellow); }
+  .section-title.red { color: var(--red); }
+  .section-title.blue { color: var(--blue); }
+  .section-title.purple { color: var(--purple); }
+
+  .section-count {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-left: auto;
+    font-weight: 500;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+
+  .card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .card.green { border-left: 3px solid var(--green); }
+  .card.yellow { border-left: 3px solid var(--yellow); }
+  .card.red { border-left: 3px solid var(--red); }
+  .card.blue { border-left: 3px solid var(--blue); }
+
+  .card .num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .card .claim {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card .verdict {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .card .verdict strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── Analogy Box ── */
+  .analogy-box {
+    background: var(--bg-card);
+    border: 1px solid var(--purple-border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .analogy-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--purple), transparent);
+    border-radius: 14px 14px 0 0;
+  }
+
+  .analogy-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: 14px;
+  }
+
+  .analogy-box p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .analogy-box p:last-child { margin-bottom: 0; }
+
+  .analogy-box .better {
+    background: var(--purple-bg);
+    border: 1px solid var(--purple-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+
+  .analogy-box .better strong {
+    color: var(--purple);
+  }
+
+  /* ── Checklist ── */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 640px) {
+    .checklist-grid { grid-template-columns: 1fr; }
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    transition: background 0.2s;
+  }
+
+  .checklist-item:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--text-dim);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .checklist-item .idx {
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    min-width: 20px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card, .analogy-box, .checklist-item {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.02s; }
+  .card:nth-child(2) { animation-delay: 0.04s; }
+  .card:nth-child(3) { animation-delay: 0.06s; }
+  .card:nth-child(4) { animation-delay: 0.08s; }
+  .card:nth-child(5) { animation-delay: 0.10s; }
+  .card:nth-child(6) { animation-delay: 0.12s; }
+  .card:nth-child(7) { animation-delay: 0.14s; }
+  .card:nth-child(8) { animation-delay: 0.16s; }
+  .card:nth-child(9) { animation-delay: 0.18s; }
+  .card:nth-child(10) { animation-delay: 0.20s; }
+  .card:nth-child(11) { animation-delay: 0.22s; }
+  .card:nth-child(12) { animation-delay: 0.24s; }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 28px; }
+    .score-number { font-size: 40px; }
+    .score-top { flex-direction: column; align-items: flex-start; }
+    .container { padding: 32px 16px 60px; }
+    .score-hero { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="label">Transcript Analysis</div>
+    <h1>Shaw's Assumptions Scorecard</h1>
+    <div class="subtitle">Shaw &times; Kai &times; Banjo &mdash; April 13, 2026</div>
+  </div>
+
+  <!-- Score Hero -->
+  <div class="score-hero">
+    <div class="score-top">
+      <div>
+        <div class="score-number">13<span> / 18</span></div>
+        <div class="score-label">Claims Valid or Partially Valid</div>
+      </div>
+      <div class="score-breakdown">
+        <div class="score-pill green"><div class="dot"></div>12 Confirmed</div>
+        <div class="score-pill yellow"><div class="dot"></div>5 Partial</div>
+        <div class="score-pill red"><div class="dot"></div>3 Incorrect</div>
+        <div class="score-pill blue"><div class="dot"></div>1 Unverifiable</div>
+      </div>
+    </div>
+    <div class="score-bar-container">
+      <div class="score-bar-label">Distribution</div>
+      <div class="score-bar">
+        <div class="seg green"></div>
+        <div class="seg yellow"></div>
+        <div class="seg red"></div>
+        <div class="seg blue"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ CONFIRMED -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon green">&#10003;</div>
+      <div class="section-title green">Confirmed &mdash; High Confidence</div>
+      <div class="section-count">12 claims</div>
+    </div>
+
+    <div class="card green">
+      <div class="num">#1</div>
+      <div class="claim">Multi-channel campaigns outperform single-channel</div>
+      <div class="verdict">Extensively validated by marketing research.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#2</div>
+      <div class="claim">Buyer / Champion / End User model shortens B2B cycles</div>
+      <div class="verdict">Apollo.io, MEDDIC, and <strong>Challenger Sale</strong> frameworks all confirm this approach.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#3</div>
+      <div class="claim">Problem &rarr; Solution &rarr; Product Aware framework</div>
+      <div class="verdict">Derived from Eugene Schwartz's <strong>"Breakthrough Advertising"</strong> (1966). Well-established in direct response marketing.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#4</div>
+      <div class="claim">Meta and Google are walled gardens</div>
+      <div class="verdict">Correct terminology and accurate distinction from open programmatic ecosystem.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#5</div>
+      <div class="claim">9 ad exchanges listed are real and major</div>
+      <div class="verdict">Google AdX, Magnite, OpenX, Index Exchange, PubMatic, Xandr, Amazon, Sharethrough, Smaato &mdash; all verified.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#6</div>
+      <div class="claim">DSP operates on real-time bidding</div>
+      <div class="verdict">Accurate. Also supports PMP deals and programmatic guaranteed.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#7</div>
+      <div class="claim">Display ads attract bots without targeting</div>
+      <div class="verdict"><strong>20&ndash;40% invalid traffic</strong> in programmatic is well-documented across industry reports.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#8</div>
+      <div class="claim">Creative fatigue requires 3&ndash;5 variations</div>
+      <div class="verdict">Industry standard best practice across performance marketing.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#9</div>
+      <div class="claim">6 primary IAB display ad sizes</div>
+      <div class="verdict">Matches current IAB standards for display advertising.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#10</div>
+      <div class="claim">Lower ticket = fewer touchpoints</div>
+      <div class="verdict">Supported by sales cycle research &mdash; deal complexity scales with price.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#11</div>
+      <div class="claim">White-labeling as growth strategy</div>
+      <div class="verdict">Proven SaaS go-to-market approach with extensive case studies.</div>
+    </div>
+    <div class="card green">
+      <div class="num">#12</div>
+      <div class="claim">A/B testing per avatar is best practice</div>
+      <div class="verdict">Standard across all performance marketing disciplines.</div>
+    </div>
+  </div>
+
+  <!-- ⚠️ PARTIALLY CORRECT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon yellow">!</div>
+      <div class="section-title yellow">Partially Correct &mdash; Needs Refinement</div>
+      <div class="section-count">5 claims</div>
+    </div>
+
+    <div class="card yellow">
+      <div class="num">#13</div>
+      <div class="claim">Touchpoints: "historically 7, now 11&ndash;14"</div>
+      <div class="verdict">The <strong>"Rule of 7"</strong> is real but loosely sourced (1930s movie industry). 11&ndash;14 is directionally correct but lacks a single authoritative source. The underlying principle &mdash; more touchpoints are needed now &mdash; is sound.</div>
+    </div>
+    <div class="card yellow">
+      <div class="num">#14</div>
+      <div class="claim">RB2B: "fastest growing company in 2024, $1M ARR in 14 months"</div>
+      <div class="verdict">RB2B (Adam Robinson) did grow explosively. Timeline roughly correct. <strong>"Fastest growing company"</strong> is hyperbolic &mdash; notable in B2B SaaS/identity space, not across all industries.</div>
+    </div>
+    <div class="card yellow">
+      <div class="num">#15</div>
+      <div class="claim">"B2C is emotional, B2B is rational"</div>
+      <div class="verdict">Textbook distinction, broadly true. <strong>However:</strong> Google/CEB research found B2B buyers are <em>more</em> emotionally connected to vendors than B2C buyers. B2B involves career risk, trust, and fear of wrong choice.</div>
+    </div>
+    <div class="card yellow">
+      <div class="num">#16</div>
+      <div class="claim">Enterprise = $50M&ndash;$100M+</div>
+      <div class="verdict">Shaw's threshold is too low. Standard: SMB &lt;$50M, mid-market $50M&ndash;$1B, <strong>enterprise $1B+</strong>. Shaw's functional definition (red tape, silos, long cycles) is actually more useful.</div>
+    </div>
+    <div class="card yellow">
+      <div class="num">#17</div>
+      <div class="claim">ICP = business, Avatar = person</div>
+      <div class="verdict">Useful working distinction, increasingly common in B2B, but <strong>not universally standardized</strong> in marketing literature.</div>
+    </div>
+  </div>
+
+  <!-- ❌ INCORRECT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon red">&#10007;</div>
+      <div class="section-title red">Incorrect &mdash; Needs Correction</div>
+      <div class="section-count">3 claims</div>
+    </div>
+
+    <div class="card red">
+      <div class="num">#18</div>
+      <div class="claim">"Fractional reserve banking requires 10% of deposits"</div>
+      <div class="verdict"><strong>Reality:</strong> The Fed reduced reserve requirements to <strong>0%</strong> in March 2020. Even before that, 10% only applied to transaction deposits above certain thresholds &mdash; not "all holdings in dollars or gold."</div>
+    </div>
+    <div class="card red">
+      <div class="num">#19</div>
+      <div class="claim">"M1 is money supply, M2 has to do with velocity of money"</div>
+      <div class="verdict"><strong>Reality:</strong> M1 <em>and</em> M2 are both money supply measures. M1 = cash + checking deposits. M2 = M1 + savings + money market + small CDs. <strong>Velocity (V)</strong> is a separate metric: GDP &divide; Money Supply.</div>
+    </div>
+    <div class="card red">
+      <div class="num">#20</div>
+      <div class="claim">"Velocity of money is 7&ndash;9x per year"</div>
+      <div class="verdict"><strong>Reality:</strong> M2 velocity is approximately <strong>1.1</strong> (as of 2023&ndash;24). Pre-2020 M1 velocity was 5&ndash;7, but M1 was redefined in May 2020. Shaw's figure is outdated and conflates metrics.</div>
+    </div>
+  </div>
+
+  <!-- 🔍 UNVERIFIABLE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon blue">?</div>
+      <div class="section-title blue">Unverifiable</div>
+      <div class="section-count">1 claim</div>
+    </div>
+
+    <div class="card blue">
+      <div class="num">#21</div>
+      <div class="claim">"Alex Hormozi uses intent data"</div>
+      <div class="verdict">Plausible but not publicly confirmed. Hormozi's public content focuses on organic reach and direct response strategies.</div>
+    </div>
+  </div>
+
+  <!-- Analogy Box -->
+  <div class="analogy-box">
+    <h3>Velocity of Money Analogy &mdash; Better Alternative</h3>
+    <p>Shaw's analogy (money circulates &rarr; touchpoints compound) works at surface level but breaks down: <strong>ad spend is consumed, not re-circulated.</strong></p>
+    <div class="better">
+      <p><strong>Better analogy: Marketing Compound Interest.</strong> Each touchpoint compounds on previous ones. First impression = minimal impact. Fifth = recognition. Tenth = trust. Twelfth = action. Multi-channel = diversified portfolio reducing risk while maintaining compounding growth.</p>
+    </div>
+  </div>
+
+  <!-- Knowledge Gaps Checklist -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon purple">&#9670;</div>
+      <div class="section-title purple">14 Knowledge Gaps to Close</div>
+    </div>
+
+    <div class="checklist-grid">
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">01</span> Content marketing as B2B foundation</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">02</span> Cookie deprecation impact on programmatic</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">03</span> Multi-touch attribution complexity</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">04</span> Frequency capping in DSP</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">05</span> Brand safety / placement transparency</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">06</span> Cold email deliverability post-2024 DMARC enforcement</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">07</span> Customer Lifetime Value (CLV) economics</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">08</span> Google's "messy middle" B2B research</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">09</span> Dynamic Creative Optimization (DCO)</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">10</span> Landing page CRO</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">11</span> Organic social for B2B (founder-led content)</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">12</span> Marketing-to-sales handoff / lead scoring</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">13</span> Incrementality testing</div></div>
+      <div class="checklist-item"><div class="check-box"></div><div><span class="idx">14</span> Privacy regulations (GDPR/CCPA) for pixel + intent data</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Shaw's Assumptions Scorecard &mdash; Generated Apr 13, 2026 &mdash; Transcript: Shaw &times; Kai &times; Banjo
+  </div>
+
+</div>
+
+</body>
+</html>
